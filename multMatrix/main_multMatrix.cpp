@@ -13,7 +13,6 @@ int main()
     // crea un multiplicador de matrices nuevo
     multMatrix* mmatrix=new multMatrix();
 
-
     // crea matriz 1 aleatoria, dimensiones 5x5
     matrix_t* m1= mmatrix->createRandMatrix(5,5);
 
