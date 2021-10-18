@@ -2,7 +2,9 @@
 
 #include "multMatrixStub.h"
 #include <string.h>
+#include "defineOperations.h"
 
+/*
 #define OP_OK             'O'
 #define OP_EXIT           'E'
 
@@ -11,7 +13,7 @@
 #define OP_WRITE          'W'
 #define OP_CREATEIDENTITY 'I'
 #define OP_CREATERANDOM   'A' // "A" de aleatorio, era mas logico usar R para read.
-
+*/
 multMatrixStub::multMatrixStub() {
     char *ip = NULL;
     ip = new char[strlen(IP_SERVER) + 1];

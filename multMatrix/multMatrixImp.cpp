@@ -1,7 +1,9 @@
 // SERVIDOR
+
+#include "defineOperations.h"
 #include "multMatrixImp.h"
 #include "multmatrix.h"
-
+/*
 #define OP_READ           'R'
 #define OP_MULT           'M'
 #define OP_WRITE          'W'
@@ -10,7 +12,7 @@
 
 // NOTA: adminMatrices es el equivalente a "ops" en la practica 0. Es el objeto que se encarga
 // de hacer cosas con las matrices.
-
+*/
 
 multMatrixImp::multMatrixImp(int clientID) {
     adminMatrices = new multMatrix();
