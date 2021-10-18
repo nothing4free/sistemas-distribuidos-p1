@@ -55,7 +55,7 @@ multMatrixStub::~multMatrixStub() {
 
 matrix_t* multMatrixStub::readMatrix(const char* filename) {
     char msg=OP_READ;
-    //int* buff = nullptr; // cha cha real smooth ahora es un int
+    int* buff = nullptr; // cha cha real smooth ahora es un int
     int dataLen = 0;
 
     matrix_t* resultado = nullptr;
@@ -64,17 +64,16 @@ matrix_t* multMatrixStub::readMatrix(const char* filename) {
     std::cout << "ENVIANDO NOMBRE DE ARCHIVO (readMatrix)\n";
     sendMSG(serverID, (void*)&filename, strlen(filename) + 1);
     std::cout << "RECIBIENDO EL RESULTADO (readMatrix)\n";
-    recvMSG(serverID, (void**)&resultado->data, &dataLen);
+    recvMSG(serverID, (void**)&buff, &dataLen);
 
     std::cout << "COPIANDO MEMORIA\n";
-    resultado->rows = resultado->data[0];
-    resultado->cols = resultado->data[1];
-    resultado->data = &resultado->data[2]; // no lo entenderias...
-    //memcpy(&resultado, buff, sizeof(int));
-
+    resultado->rows = buff[0];
+    resultado->cols = buff[1];
+    memcpy(&resultado, &buff[2], sizeof(int)*(dataLen-2));
+    //sin perdida de memoria y sin 
     std::cout << "RESULTADO: \n";
     std::cout << "Filas: %d Columnas: %d\n", resultado->rows, resultado->cols;
-    //delete buff; no tengo huevos de eliminarlo pero esta eliminado
+    delete buff;    //ahora funciona bien
     return resultado;
 }
 
