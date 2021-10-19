@@ -143,22 +143,21 @@ matrix_t* multMatrixStub::multMatrices(matrix_t* m1, matrix_t* m2) {
 
 
 void multMatrixStub::writeMatrix(matrix_t* m, const char *fileName) {
+    char msg = OP_WRITE; 
+    int* buff=new int[m->cols*m->rows +2];
         //TIPO OPE.
-    char msg = OP_WRITE;
-    
     sendMSG(serverID, (void*)&msg, sizeof(char));
         //NOMBRE ARCHIVO
     sendMSG(serverID, (void*)&fileName, sizeof(fileName) + 1);
         //MATRIZ
     std::cout << "ENVIANDO MATRIZ (multMatrix)\n";
-    int* buff=new int[m->cols*m->rows +2];
     buff[0] = m->rows;
     buff[1] = m->cols;
     for(int i=0;i<(m->rows*m->cols);++i){
 		buff[i+2]=m->data[i];
 	}
     sendMSG(serverID, (void*)&buff, sizeof(int)*m->rows*m->cols + 2*sizeof(int));
-
+    delete buff;
 }
 
 // precondicion: rows = cols

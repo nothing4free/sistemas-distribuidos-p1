@@ -44,13 +44,15 @@ void multMatrixImp::exec() {
             // TO-DO: operaciones
             switch(tipo_op) {
                 case OP_READ: {
+
                     char *fileName=nullptr;
 					matrix_t* mat = nullptr;
 					int * aux=nullptr;
-					//recibir datos
+					
+						//recibir nombre fichero a leer
 					recvMSG(clientID,(void**)&fileName,&dataLen);					
 					mat = adminMatrices->readMatrix(fileName);
-					//formatear adecuadamente 
+						//formatear adecuadamente 
 					//2 primeros son la fila y columnas luego la data
 					aux= new int[mat->cols*mat->rows+2];
 					aux[0]=mat->rows;
@@ -58,8 +60,8 @@ void multMatrixImp::exec() {
 					for(int i=0;i<dataLen;++i){
 						aux[i+2]=mat->data[i];
 					}
-					//devolver resultado
-					sendMSG(clientID, (void*)&aux, sizeof(int) * mat->cols * mat->rows + 2*sizeof(int));
+						//devolver resultado
+					sendMSG(clientID, (void*)&aux, sizeof(int)*(mat->cols * mat->rows +2));
 					delete aux;
 					delete fileName;
 					delete mat;
@@ -68,12 +70,12 @@ void multMatrixImp::exec() {
                 case OP_MULT: {
 					int* buff = nullptr;
                     //se puede optimizar para que solo haya 1 mensaje 
-					//pero dolor cerebral son las 3 quiero dormir
+					//pero dolor cerebral son las 3 quiero morir
 					matrix_t* matA=nullptr;
 					matrix_t* matB=nullptr;
 					matrix_t* res=nullptr;
 
-//recibir row y col
+						//recibir mat A
 					recvMSG(clientID,(void**)&buff,&dataLen); //2 matrices con tamanio
 					matA->rows=buff[0];
 					matA->cols=buff[1];
@@ -82,12 +84,13 @@ void multMatrixImp::exec() {
 					std::cout << "ROWS: %d COLS: %d [0][0]:%d\n", matA->rows, matA->cols,matA->data[0];
 					delete buff;
 
+						//recibir mat B
 					recvMSG(clientID,(void**)&buff,&dataLen); //2 matrices con tamanio
 					matB->rows=buff[0];
 					matB->cols=buff[1];
 					memcpy(&matB, &buff[2], sizeof(int)*(dataLen-2));
 					std::cout << "RECIBIDA MATRIZ B\n";
-					std::cout << "ROWS: %d COLS: %d\n", matB->rows, matB->cols;
+					std::cout << "ROWS: %d COLS: %d [0][0]\n", matB->rows, matB->cols, matB->data[0];
 					delete buff;
 
 						//operamos
@@ -100,51 +103,47 @@ void multMatrixImp::exec() {
 					delete res;
                 } break;
 
-                case OP_WRITE: { //TODO -> rehacer para recibir de la nueva forma
-                    //recibire 2 mensajes, 1 con el nombre otro con la matriz
+                case OP_WRITE: { 
 					char *fileName=nullptr;
+					int *buff=nullptr;
 					matrix_t* mat=nullptr;
 
+				        //NOMBRE ARCHIVO
 					recvMSG(clientID,(void**)&fileName,&dataLen);
-					//utilizo mat.data como buffer, 
-					//despues de actualizar col y row, reseteo la posicion de mat.data
-					recvMSG(clientID,(void**)&mat->data,&dataLen);
-					mat->rows=mat->data[0];
-					mat->cols=mat->data[1];
-					mat->data=&(mat->data[2]);
+						//RECIBIR DATA
+					recvMSG(clientID,(void**)&buff,&dataLen);
+					mat->rows=buff[0];
+					mat->cols=buff[1];
+					memcpy(&mat, &buff[2], sizeof(int)*(dataLen-2));
+						//ESCRIBIR COMO TAL
+					adminMatrices->writeMatrix(mat,fileName);
+
 					delete fileName;
 					delete mat;
+					delete buff;
                 } break;
 
                 case OP_CREATEIDENTITY: {
-
-                    int row = 0, col = 0;
-                    matrix_t* res = nullptr; // se crea la matriz resultado, q de momento es null
-                    
-                    // recibes cosas (creo q es innecesario porque ya se reciben antes del switch?)
-                    recvMSG(clientID, (void**)&msg, &dataLen);
-                    memcpy(&row,msg,sizeof(int));
-					memcpy(&col,msg+sizeof(int),sizeof(int));
-					delete msg;
-                    
-					res=adminMatrices->createIdentity(row,col); // creas matriz identidad...
-					sendMSG(clientID,(void*)&res->data,sizeof(int)*row*col); //... y la envias de vuelta
+					int *dimensiones=nullptr;
+                    matrix_t* res = nullptr;
+                    	//DIMENSIONES DE LA MATRIZ
+                    recvMSG(clientID, (void**)&dimensiones, &dataLen);
+						//CREAR Y DEVOLVER
+					res=adminMatrices->createIdentity(dimensiones[0],dimensiones[1]);
+					sendMSG(clientID,(void*)&res->data,sizeof(int)* res->rows *res->cols);
+					delete dimensiones;
 					delete res;
-
                 } break;
 
                 case OP_CREATERANDOM: {
-                    int row = 0, col = 0;
-					matrix_t* res=nullptr;
-					//recibir operandos
-					recvMSG(clientID,(void**)&msg,&dataLen);
-					memcpy(&row,msg,sizeof(int));
-					memcpy(&col,msg+sizeof(int),sizeof(int));
-					delete msg;
-					//operar
-					res = adminMatrices->createRandMatrix(row,col);
-					//devolver resultado, el sabrá el tamaño porque lo ha pedido XD 
-					sendMSG(clientID,(void*)&res->data,sizeof(int)*row*col);
+                    int *dimensiones=nullptr;
+                    matrix_t* res = nullptr;
+                    	//DIMENSIONES DE LA MATRIZ
+                    recvMSG(clientID, (void**)&dimensiones, &dataLen);
+						//CREAR Y DEVOLVER
+					res=adminMatrices->createRandMatrix(dimensiones[0],dimensiones[1]);
+					sendMSG(clientID,(void*)&res->data,sizeof(int)* res->rows *res->cols);
+					delete dimensiones;
 					delete res;
                 } break;
 
