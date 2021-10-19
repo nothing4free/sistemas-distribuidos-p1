@@ -10,10 +10,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(serverMatrix LANGUAGES CXX)
 add_executable(serverMatrix mainServer.cpp utils.cpp utils.h multmatrix.cpp
-                multmatrix.h multMatrixImp.cpp multMatrixImp.h)
+                multmatrix.h multMatrixImp.cpp multMatrixImp.h defineOperation.h)
 target_link_libraries(serverMatrix pthread)
 
 project(serverMatrix LANGUAGES CXX)
 add_executable(clientMatrix mainClient.cpp utils.cpp utils.h multmatrix.cpp
-                multmatrix.h multMatrixStub.cpp multMatrixStub.h)
+                multmatrix.h multMatrixStub.cpp multMatrixStub.h defineOperation.h)
 target_link_libraries(clientMatrix pthread)
