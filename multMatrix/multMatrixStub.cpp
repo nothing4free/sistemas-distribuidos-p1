@@ -151,10 +151,10 @@ void multMatrixStub::writeMatrix(matrix_t* m, const char *fileName) {
     sendMSG(serverID, (void*)&fileName, sizeof(fileName) + 1);
         //MATRIZ
     std::cout << "ENVIANDO MATRIZ (multMatrix)\n";
-    int buff=new int[m->cols*m->rows +2];
+    int* buff=new int[m->cols*m->rows +2];
     buff[0] = m->rows;
     buff[1] = m->cols;
-    for(int i=0;i<dataLen;++i){
+    for(int i=0;i<(m->rows*m->cols);++i){
 		buff[i+2]=m->data[i];
 	}
     sendMSG(serverID, (void*)&buff, sizeof(int)*m->rows*m->cols + 2*sizeof(int));
