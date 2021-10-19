@@ -76,7 +76,7 @@ matrix_t *multMatrix::multMatrices(matrix_t *m1, matrix_t* m2)
 
             for(int k=0;k<m1->cols;k++) //dot mult m1 row by m2 col
             {
-                mres->data[i*mres->cols+j]+=m1->data[i*m1->cols+k]*m1->data[k*m2->cols+j];
+                mres->data[i*mres->cols+j]+=m1->data[i*m1->cols+k]*m2->data[k*m2->cols+j]; //el primer m2 estaba puesto como m1
             }
          }
      }
