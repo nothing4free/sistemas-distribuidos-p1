@@ -66,26 +66,29 @@ void multMatrixImp::exec() {
                 } break ;
                 
                 case OP_MULT: {
+					int* buff = nullptr;
                     //se puede optimizar para que solo haya 1 mensaje 
 					//pero dolor cerebral son las 3 quiero dormir
 					matrix_t* matA=nullptr;
 					matrix_t* matB=nullptr;
 					matrix_t* res=nullptr;
 
-					recvMSG(clientID,(void**)&matA->data,&dataLen); //2 matrices con tamanio
-					matA->rows=matA->data[0];
-					matA->cols=matA->data[1];
-					matA->data=&(matA->data[2]);
+//recibir row y col
+					recvMSG(clientID,(void**)&buff,&dataLen); //2 matrices con tamanio
+					matA->rows=buff[0];
+					matA->cols=buff[1];
+					memcpy(&matA, &buff[2], sizeof(int)*(dataLen-2));
 					std::cout << "RECIBIDA MATRIZ A\n";
-					std::cout << "ROWS: %d COLS: %d\n", matA->rows, matA->cols;
+					std::cout << "ROWS: %d COLS: %d [0][0]:%d\n", matA->rows, matA->cols,matA->data[0];
+					delete buff;
 
-					recvMSG(clientID,(void**)&matB->data,&dataLen); //2 matrices con tamanio
-					matB->rows=matB->data[0];
-					matB->cols=matB->data[1];
-					matB->data=&(matB->data[2]);
+					recvMSG(clientID,(void**)&buff,&dataLen); //2 matrices con tamanio
+					matB->rows=buff[0];
+					matB->cols=buff[1];
+					memcpy(&matB, &buff[2], sizeof(int)*(dataLen-2));
 					std::cout << "RECIBIDA MATRIZ B\n";
 					std::cout << "ROWS: %d COLS: %d\n", matB->rows, matB->cols;
-
+					delete buff;
 
 						//operamos
 					res= adminMatrices->multMatrices(matA,matB); 
