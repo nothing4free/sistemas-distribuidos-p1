@@ -240,7 +240,7 @@ void recvMSG(int connID, void** data, int* dataLen){
         read(socket, &tag, sizeof(short int));
     if(tag!= SYNC)
     {
-        printf("ERROR: recvMSG, linea: %d\n",__LINE__, " archivo: " __FILE__);
+        printf("ERROR: recvMSG, linea: %d\n",__LINE__);
         //error
         closeConnection(socket);
          //exit
