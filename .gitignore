@@ -3,6 +3,8 @@ Makefile
 *.cmake
 CMakeFiles/
 pruebasEjecutables/
+.vscode
+
 # Prerequisites
 *.d
 

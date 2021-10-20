@@ -1,5 +1,5 @@
 // aqui vienen ya todas las operaciones definidas, NO TOCAR NADA!!
-
+#pragma once
 #ifndef MULTMATRIX_H
 #define MULTMATRIX_H
 

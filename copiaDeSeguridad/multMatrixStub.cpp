@@ -110,7 +110,7 @@ matrix_t* multMatrixStub::multMatrices(matrix_t* m1, matrix_t* m2) {
 		buff[i+2]=m1->data[i];
 	}
     std::cout << "ENVIANDO MATRIZ 1 (multMatrix)\n";
-    sendMSG(serverID, (void*)buff, sizeof(int)*m1->rows*m1->cols + 2*sizeof(int));
+    sendMSG(serverID, (void*)&buff, sizeof(int)*m1->rows*m1->cols + 2*sizeof(int));
     
 
     std::cout << "ENVIANDO MATRIZ 2 (multMatrix)\n";
@@ -119,7 +119,7 @@ matrix_t* multMatrixStub::multMatrices(matrix_t* m1, matrix_t* m2) {
     for(int i=0;i<dataLen;++i){
 		buff[i+2]=m2->data[i];
 	}
-    sendMSG(serverID, (void*)buff, sizeof(int)*m2->rows*m2->cols + 2*sizeof(int));
+    sendMSG(serverID, (void*)&buff, sizeof(int)*m2->rows*m2->cols + 2*sizeof(int));
     /*
     std::cout << "ENVIANDO ROWS Y COLS MAT2 (multMatrix)\n";
     sendMSG(serverID, (void*)&aux, sizeof(int) * 2);
@@ -148,7 +148,7 @@ void multMatrixStub::writeMatrix(matrix_t* m, const char *fileName) {
         //TIPO OPE.
     sendMSG(serverID, (void*)&msg, sizeof(char));
         //NOMBRE ARCHIVO
-    sendMSG(serverID, (void*)fileName, sizeof(fileName) + 1);
+    sendMSG(serverID, (void*)&fileName, sizeof(fileName) + 1);
         //MATRIZ
     std::cout << "ENVIANDO MATRIZ (multMatrix)\n";
     buff[0] = m->rows;
@@ -156,7 +156,7 @@ void multMatrixStub::writeMatrix(matrix_t* m, const char *fileName) {
     for(int i=0;i<(m->rows*m->cols);++i){
 		buff[i+2]=m->data[i];
 	}
-    sendMSG(serverID, (void*)buff, sizeof(int)*m->rows*m->cols + 2*sizeof(int));
+    sendMSG(serverID, (void*)&buff, sizeof(int)*m->rows*m->cols + 2*sizeof(int));
     delete buff;
 }
 
@@ -183,7 +183,7 @@ matrix_t* multMatrixStub::createRandMatrix(int rows, int cols) {
     sendMSG(serverID, (void*)&msg, sizeof(char));
 
     int aux[2] = {rows, cols};
-    sendMSG(serverID, (void*)aux, sizeof(int) * 2);
+    sendMSG(serverID, (void*)&aux, sizeof(int) * 2);
 
     matrix_t *randomMat = nullptr;
     randomMat->cols = cols;

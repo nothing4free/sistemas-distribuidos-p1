@@ -4,16 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "utils.h"
+#include "multmatrix.h"
 
 #define IP_SERVER "127.0.0.1"
 #define PORT_SERVER 3301
 
-typedef struct matrix_t
-{
-    int rows;
-    int cols;
-    int* data;
-}matrix_t;
 
 class multMatrixStub {
     private:

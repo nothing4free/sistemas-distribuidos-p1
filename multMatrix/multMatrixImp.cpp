@@ -61,7 +61,7 @@ void multMatrixImp::exec() {
 						aux[i+2]=mat->data[i];
 					}
 						//devolver resultado
-					sendMSG(clientID, (void*)&aux, sizeof(int)*(mat->cols * mat->rows +2));
+					sendMSG(clientID, (void*)aux, sizeof(int)*(mat->cols * mat->rows +2));
 					delete aux;
 					delete fileName;
 					delete mat;
@@ -97,7 +97,7 @@ void multMatrixImp::exec() {
 					res= adminMatrices->multMatrices(matA,matB); 
 						//enviamos resultado de vuelta el ya puede saber como será la matriz 
 						//al tener los tam de las que nos envio
-					sendMSG(clientID,(void*)&res->data,sizeof(int)*matA->rows*matB->cols);
+					sendMSG(clientID,(void*)res->data,sizeof(int)*matA->rows*matB->cols);
 					delete matA;
 					delete matB;
 					delete res;
@@ -130,7 +130,7 @@ void multMatrixImp::exec() {
                     recvMSG(clientID, (void**)&dimensiones, &dataLen);
 						//CREAR Y DEVOLVER
 					res=adminMatrices->createIdentity(dimensiones[0],dimensiones[1]);
-					sendMSG(clientID,(void*)&res->data,sizeof(int)* res->rows *res->cols);
+					sendMSG(clientID,(void*)res->data,sizeof(int)* res->rows *res->cols);
 					delete dimensiones;
 					delete res;
                 } break;
@@ -142,7 +142,7 @@ void multMatrixImp::exec() {
                     recvMSG(clientID, (void**)&dimensiones, &dataLen);
 						//CREAR Y DEVOLVER
 					res=adminMatrices->createRandMatrix(dimensiones[0],dimensiones[1]);
-					sendMSG(clientID,(void*)&res->data,sizeof(int)* res->rows *res->cols);
+					sendMSG(clientID,(void*)res->data,sizeof(int)* res->rows *res->cols);
 					delete dimensiones;
 					delete res;
                 } break;
