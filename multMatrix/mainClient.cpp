@@ -7,7 +7,14 @@
 void freeMatrix(matrix_t* m){
     delete[] m->data;
     delete[] m;
-
+}
+void writeMat(matrix_t* m){
+    int i=0;
+    for(i=0;i<(m->rows*m->cols);++i);{
+        std::cout<<"  " << m->data[i] << "  ";
+        if(i%(m->rows)==0)
+            std::cout<<"\n";
+    }
 }
 
 int main(int argc,char** argv) {    
@@ -74,9 +81,11 @@ int main(int argc,char** argv) {
 */
 //TERMINA LA PRUEBA DE UN MENU
 
-    // crea matriz 1 aleatoria, dimensiones 5x5
+    std::cout<<"CREANDO MATRIZ\n";
     matrix_t* m1= mmatrix->createRandMatrix(5,5);
-
+    std::cout<<"MATRIZ RANDOM RECIBIDA \n";
+    writeMat(m1);
+    
     // crea matriz 2 aleatoria, dimensiones 5x5
     matrix_t* m2= mmatrix->createIdentity(5,5);
 

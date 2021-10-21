@@ -3,16 +3,15 @@
 #include "defineOperations.h"
 #include "multMatrixImp.h"
 #include "multmatrix.h"
-/*
-#define OP_READ           'R'
-#define OP_MULT           'M'
-#define OP_WRITE          'W'
-#define OP_CREATEIDENTITY 'I'
-#define OP_CREATERANDOM   'A' // "A" de aleatorio, era mas logico usar R para read.
 
-// NOTA: adminMatrices es el equivalente a "ops" en la practica 0. Es el objeto que se encarga
-// de hacer cosas con las matrices.
-*/
+void writeMat(matrix_t* m){
+    int i=0;
+    for(i=0;i<(m->rows*m->cols);++i);{
+        std::cout<<"  " << m->data[i] << "  ";
+        if(i%(m->rows)==0)
+            std::cout<<"\n";
+    }
+}
 
 multMatrixImp::multMatrixImp(int clientID) {
     adminMatrices = new multMatrix();
@@ -48,10 +47,11 @@ void multMatrixImp::exec() {
                     char *fileName=nullptr;
 					matrix_t* mat = nullptr;
 					int * aux=nullptr;
-					
+					std::cout<<"OP_READ->matrixImp\n";
 						//recibir nombre fichero a leer
 					recvMSG(clientID,(void**)&fileName,&dataLen);					
 					mat = adminMatrices->readMatrix(fileName);
+					writeMat(mat);
 						//formatear adecuadamente 
 					//2 primeros son la fila y columnas luego la data
 					aux= new int[mat->cols*mat->rows+2];

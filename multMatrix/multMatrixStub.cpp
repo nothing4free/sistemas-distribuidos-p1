@@ -148,6 +148,7 @@ void multMatrixStub::writeMatrix(matrix_t* m, const char *fileName) {
         //TIPO OPE.
     sendMSG(serverID, (void*)&msg, sizeof(char));
         //NOMBRE ARCHIVO
+        std::cout << "ENVIANDO fileName(wrtieMatrix)(multMatrix)\n";
     sendMSG(serverID, (void*)fileName, sizeof(fileName) + 1);
         //MATRIZ
     std::cout << "ENVIANDO MATRIZ (multMatrix)\n";
@@ -164,8 +165,10 @@ void multMatrixStub::writeMatrix(matrix_t* m, const char *fileName) {
 matrix_t* multMatrixStub::createIdentity(int rows, int cols) {
     int dataLen = 0;
     char msg = OP_CREATEIDENTITY;
+    std::cout << "ENVIANDO OP_CREATID (multMatrix)\n";
     sendMSG(serverID, (void*)&msg, sizeof(char));
 
+    std::cout << "ENVIANDO ROWS, COLS (multMatrix)\n";
     int aux[2] = {rows, cols};
     sendMSG(serverID, (void*)&aux, sizeof(int) * 2);
 
