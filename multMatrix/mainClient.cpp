@@ -25,7 +25,7 @@ int main(int argc,char** argv) {
 
     multMatrixStub* matrixStub=new multMatrixStub();
     	// crea un multiplicador de matrices nuevo
-    //multMatrix* mmatrix=new multMatrix();
+    multMatrix* matrixInOut=new multMatrix();
 
 //EMPIEZA LA PRUEBA DE UN MENU
 /*	matrix_t ** mat=new matrix_t*[10];
@@ -100,8 +100,8 @@ int main(int argc,char** argv) {
     writeMat(mres);
     
     std::cout<<"ESRIBIENDO MATRICES MRES y m2 EN 'resultado.txt' 'resultadoIden.txt'\n";
-    matrixStub->writeMatrix(mres,"resultado.txt");
-    matrixStub->writeMatrix(m2,"resultadoIden.txt");
+    matrixInOut->writeMatrix(mres,"resultado.txt");
+    matrixInOut->writeMatrix(m2,"resultadoIden.txt");
 
     std::cout<<"LEYENDO MATRIZ\n";
     matrix_t* m3=matrixStub->readMatrix("resultado.txt");
@@ -113,7 +113,7 @@ int main(int argc,char** argv) {
     writeMat(mres);
     
     std::cout<<"ESCRIBINEDO MRES2(MULT(M1.M3) en resultado2.txt)\n";
-    matrixStub->writeMatrix(mres2,"resultado2.txt");
+    matrixInOut->writeMatrix(mres2,"resultado2.txt");
     writeMat(mres2);
 
     // se libera la memoria de las matrices usadas
@@ -123,7 +123,7 @@ int main(int argc,char** argv) {
     freeMatrix(m3);
     freeMatrix(mres2);
     delete matrixStub;
-
+    delete matrixInOut;
     std::cout<<"PROGRAMA TERMINADO\n";
 	return 0;
 }
