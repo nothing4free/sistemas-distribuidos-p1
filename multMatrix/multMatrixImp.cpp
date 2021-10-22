@@ -57,7 +57,7 @@ void multMatrixImp::exec() {
 					aux= new int[mat->cols*mat->rows+2];
 					aux[0]=mat->rows;
 					aux[1]=mat->cols;
-					for(int i=0;i<dataLen;++i){
+					for(int i=0;i<mat->rows*mat->cols;++i){
 						aux[i+2]=mat->data[i];
 					}
 						//devolver resultado
@@ -81,7 +81,7 @@ void multMatrixImp::exec() {
 					matA->rows=buff[0];
 					matA->cols=buff[1];
 					matA->data= new int[matA->rows*matA->cols];
-					memcpy(matA->data, &buff[2], sizeof(int)*(dataLen-2));
+					memcpy(matA->data, &buff[2], sizeof(int)*matA->rows*matA->cols);
 					std::cout << "RECIBIDA MATRIZ A\nCols: "<<matA->cols;
 					std::cout << "ROWS: "<<matA->rows<<" COLS: "<<matA->cols<<" [0][0]: "<<matA->data[0]<<"\n";
 					delete buff;
@@ -92,7 +92,7 @@ void multMatrixImp::exec() {
 					matB->rows=buff[0];
 					matB->cols=buff[1];
 					matB->data= new int[matB->rows*matB->cols];
-					memcpy(matB->data, &buff[2], sizeof(int)*(dataLen-2));
+					memcpy(matB->data, &buff[2], sizeof(int)*matB->rows*matB->cols);
 					std::cout << "RECIBIDA MATRIZ B\n";
 					std::cout << "ROWS: "<<matB->rows<<" COLS: "<<matB->cols<<" [0][0]: "<<matB->data[0]<<"\n";
 					delete buff;
@@ -119,7 +119,7 @@ void multMatrixImp::exec() {
 					mat->rows=buff[0];
 					mat->cols=buff[1];
 					mat->data= new int[mat->rows*mat->cols];
-					memcpy(mat->data, &buff[2], sizeof(int)*(dataLen-2));
+					memcpy(mat->data, &buff[2], sizeof(int)*(mat->rows*mat->cols));
 						//ESCRIBIR COMO TAL
 					adminMatrices->writeMatrix(mat,fileName);
 
