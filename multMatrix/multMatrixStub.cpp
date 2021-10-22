@@ -60,7 +60,7 @@ matrix_t* multMatrixStub::readMatrix(const char* filename) {
     int* buff = nullptr; // lectura de mensaje reci
     int dataLen = 0;
     
-    matrix_t* resultado = nullptr;
+    matrix_t* resultado = new matrix_t;
     
     std::cout << "ENVIANDO EL TIPO DE OPERACION (readMatrix)\n";
     sendMSG(serverID, (void*)&msg, sizeof(char));
@@ -74,7 +74,8 @@ matrix_t* multMatrixStub::readMatrix(const char* filename) {
     std::cout << "COPIANDO MEMORIA\n";
     resultado->rows = buff[0];
     resultado->cols = buff[1];
-    memcpy(&resultado, &buff[2], sizeof(int)*(dataLen-2));
+    resultado->data=new int[resultado->rows*resultado->cols];
+    memcpy(resultado->data, &buff[2], sizeof(int)*(resultado->rows*resultado->cols));
     //sin perdida de memoria y sin 
     std::cout << "RESULTADO: \n";
     std::cout << "Filas: %d Columnas: %d\n", resultado->rows, resultado->cols;
@@ -84,60 +85,46 @@ matrix_t* multMatrixStub::readMatrix(const char* filename) {
 
 matrix_t* multMatrixStub::multMatrices(matrix_t* m1, matrix_t* m2) {
 
-
-    int dataLen = 0;
-    matrix_t* resultado = nullptr;
-    resultado->cols = m2->cols;
-    resultado->rows = m1->rows;
     char msg = OP_MULT;
-
-    int *buff=nullptr; //me apetece hacer la transmision de datos así
+    int dataLen = 0;
+    
+    matrix_t* resultado = new matrix_t;
+    resultado->rows = m1->rows;
+    resultado->cols = m2->cols;
+    
+    int tambuff=m1->cols*m1->rows+2;
+    std::cout<<"Tamanio buff m1->cols*m1->rows+2 = "<<tambuff<<"\n";
+    int *buff= new int[m1->cols*m1->rows+2]; 
 
     
     std::cout << "ENVIANDO EL TIPO DE OPERACION (multMatrix)\n";
     sendMSG(serverID, (void*)&msg, sizeof(char));
-/*  int aux[2] = {m1->rows, m1->cols};
-    std::cout << "ENVIANDO ROWS Y COLS MAT1 (multMatrix)\n";
-    sendMSG(serverID, (void*)&aux, sizeof(int) * 2);
-
-    std::cout << "ENVIANDO MATRIZ 1 (multMatrix)\n";
-    sendMSG(serverID, (void*)&m1->data, sizeof(int)*m1->rows*m1->cols);
-*/
-    buff= new int[m1->cols*m1->rows+2];
+    
 	buff[0]=m1->rows;
 	buff[1]=m1->cols;
-	for(int i=0;i<dataLen;++i){
+	for(int i=0;i<(m1->rows*m1->cols);++i){
 		buff[i+2]=m1->data[i];
 	}
     std::cout << "ENVIANDO MATRIZ 1 (multMatrix)\n";
     sendMSG(serverID, (void*)buff, sizeof(int)*m1->rows*m1->cols + 2*sizeof(int));
-    
+    delete buff;
 
+    buff=new int [m2->rows*m2->cols+2]; //actualizamos tamanio
     std::cout << "ENVIANDO MATRIZ 2 (multMatrix)\n";
     buff[0] = m2->rows;
     buff[1] = m2->cols;
-    for(int i=0;i<dataLen;++i){
+    for(int i=0;i<m2->cols*m2->rows;++i){
 		buff[i+2]=m2->data[i];
 	}
-    sendMSG(serverID, (void*)buff, sizeof(int)*m2->rows*m2->cols + 2*sizeof(int));
-    /*
-    std::cout << "ENVIANDO ROWS Y COLS MAT2 (multMatrix)\n";
-    sendMSG(serverID, (void*)&aux, sizeof(int) * 2);
-
-    std::cout << "ENVIANDO MATRIZ 2 (multMatrix)\n";
-    sendMSG(serverID, (void*)&m2->data, sizeof(int)*m2->rows*m2->cols);
-*/
+    sendMSG(serverID, (void*)buff, sizeof(int)*(m2->rows*m2->cols+2));
     
     //Matriz resultado
     std::cout << "ESPERANDO RESULTADO (multMatrix)\n";
     recvMSG(serverID, (void**)&resultado->data, &dataLen);
     std::cout << "RESULTADO RECIBIDO (multMatrix)\n";
-    if(dataLen != resultado->rows * resultado->cols) {
-        std::cout << "LA MATRIZ PROBABLEMENTE ESTA MAL\n";
-        // to fucking do
-    }else{
-        std::cout << "ENVIANDO MATRIZ 2 (multMatrix)\n";
-    }
+    
+    std::cout << "Devolviendo MATRIZ 2 (multMatrix)\n";
+    
     return resultado;
 }
 
@@ -151,7 +138,7 @@ void multMatrixStub::writeMatrix(matrix_t* m, const char *fileName) {
         std::cout << "ENVIANDO fileName(wrtieMatrix)(multMatrix)\n";
     sendMSG(serverID, (void*)fileName, sizeof(fileName) + 1);
         //MATRIZ
-    std::cout << "ENVIANDO MATRIZ (multMatrix)\n";
+    std::cout << "ENVIANDO MATRIZ (stub wrtieMAtrix)\n";
     buff[0] = m->rows;
     buff[1] = m->cols;
     for(int i=0;i<(m->rows*m->cols);++i){
@@ -165,17 +152,17 @@ void multMatrixStub::writeMatrix(matrix_t* m, const char *fileName) {
 matrix_t* multMatrixStub::createIdentity(int rows, int cols) {
     int dataLen = 0;
     char msg = OP_CREATEIDENTITY;
-    std::cout << "ENVIANDO OP_CREATID (multMatrix)\n";
+    std::cout << "ENVIANDO OP_CREATID (stub)\n";
     sendMSG(serverID, (void*)&msg, sizeof(char));
 
-    std::cout << "ENVIANDO ROWS, COLS (multMatrix)\n";
+    std::cout << "ENVIANDO ROWS, COLS (Stub createIdentity)\n";
     int aux[2] = {rows, cols};
     sendMSG(serverID, (void*)&aux, sizeof(int) * 2);
 
-    matrix_t *identity = nullptr;
+    matrix_t *identity = new matrix_t;
     identity->cols = cols;
     identity->rows = rows;
-
+    
     recvMSG(serverID, (void**)&identity->data, &dataLen);
     return identity;
 }
@@ -188,7 +175,7 @@ matrix_t* multMatrixStub::createRandMatrix(int rows, int cols) {
     int aux[2] = {rows, cols};
     sendMSG(serverID, (void*)aux, sizeof(int) * 2);
 
-    matrix_t *randomMat = nullptr;
+    matrix_t *randomMat = new matrix_t;
     randomMat->cols = cols;
     randomMat->rows = rows;
     

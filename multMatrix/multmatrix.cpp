@@ -106,7 +106,6 @@ void multMatrix::writeMatrix(matrix_t *m,const char* fileName)
  * @param cols Número de columnas
  * @return Una estructura de tipo "matrix_t" con los datos rellenados
  */
-
 matrix_t* multMatrix::createRandMatrix(int rows, int cols)
 {
 

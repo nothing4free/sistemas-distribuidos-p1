@@ -10,11 +10,13 @@ void freeMatrix(matrix_t* m){
 }
 void writeMat(matrix_t* m){
     int i=0;
-    for(i=0;i<(m->rows*m->cols);++i);{
+    std::cout<<"ROW: "<<m->rows<<" COLS: "<<m->cols<<"\n";
+    /*for(i=0;i<(m->rows*m->cols);++i);{
         std::cout<<"  " << m->data[i] << "  ";
         if(i%(m->rows)==0)
             std::cout<<"\n";
-    }
+    }*/
+    std::cout<<"data[0] "<<m->data[0]<<" data[1]: "<<m->data[1]<<"\n";
 }
 
 int main(int argc,char** argv) {    
@@ -23,7 +25,7 @@ int main(int argc,char** argv) {
 
     multMatrixStub* matrixStub=new multMatrixStub();
     	// crea un multiplicador de matrices nuevo
-    multMatrix* mmatrix=new multMatrix();
+    //multMatrix* mmatrix=new multMatrix();
 
 //EMPIEZA LA PRUEBA DE UN MENU
 /*	matrix_t ** mat=new matrix_t*[10];
@@ -82,34 +84,39 @@ int main(int argc,char** argv) {
 //TERMINA LA PRUEBA DE UN MENU
 
     std::cout<<"CREANDO MATRIZ\n";
-    matrix_t* m1= mmatrix->createRandMatrix(5,5);
+    matrix_t* m1= matrixStub->createRandMatrix(5,5);
     std::cout<<"MATRIZ RANDOM RECIBIDA \n";
     writeMat(m1);
     
-    // crea matriz 2 aleatoria, dimensiones 5x5
-    matrix_t* m2= mmatrix->createIdentity(5,5);
 
-    // crea la matriz resultado, que es el resultado de multiplicar m1 y m2 (dimensiones 5x5)
-    matrix_t* mres=mmatrix->multMatrices(m1,m2);
+    std::cout<<"CREANDO MATRIZ IDENTIDAD\n";
+    matrix_t* m2= matrixStub->createIdentity(5,5);
+    writeMat(m2);
 
-    // escribe mres (matriz resultado) en el fichero "resultado.txt"
-    mmatrix->writeMatrix(mres,"resultado.txt");
+    std::cout<<"MULTIPLICANDO MATRICES\n";
+    matrix_t* mres=matrixStub->multMatrices(m1,m2);
+    writeMat(mres);
+    
+    std::cout<<"ESRIBIENDO MATRICES EN 'resultado.txt'\n";
+    matrixStub->writeMatrix(mres,"resultado.txt");
 
-    // ahora crea una matriz 3, cuyos datos son leidos del fichero "resultado.txt"
-    matrix_t* m3=mmatrix->readMatrix("resultado.txt");
+    std::cout<<"LEYENDO MATRIZ\n";
+    matrix_t* m3=matrixStub->readMatrix("resultado.txt");
+    writeMat(mres);
 
-    // multiplica matriz 1 y matriz 3, y almacena el resultado en matriz resultado 2
-    matrix_t* mres2=mmatrix->multMatrices(m1,m3);
-
-    // escribe mres2 (matriz resultado 2) en el fichero "resultado2.txt"
-    mmatrix->writeMatrix(mres2,"resultado2.txt");
-
+    std::cout<<"MULTIPLICNADO M1 CON M3(LEIDA)\n";
+    matrix_t* mres2=matrixStub->multMatrices(m1,m3);
+    writeMat(mres);
+    
+    std::cout<<"ESCRIBINEDO MRES2(MULT(M1.M3) en resultado2.txt)\n";
+    matrixStub->writeMatrix(mres2,"resultado2.txt");
+    writeMat(mres2);
     // se libera la memoria de las matrices usadas
     freeMatrix(m1);
     freeMatrix(m2);
     freeMatrix(mres);
     freeMatrix(m3);
     freeMatrix(mres2);
-    delete mmatrix;
+    delete matrixStub;
 	return 0;
 }

@@ -42,10 +42,10 @@ void multMatrixImp::exec() {
 
             // TO-DO: operaciones
             switch(tipo_op) {
-                case OP_READ: {
+                case OP_READ: { 
 
-                    char *fileName=nullptr;
-					matrix_t* mat = nullptr;
+                    char *fileName=nullptr; //se inicializa en el primer recvMSG linea 52
+					matrix_t* mat = new matrix_t;
 					int * aux=nullptr;
 					std::cout<<"OP_READ->matrixImp\n";
 						//recibir nombre fichero a leer
@@ -71,26 +71,30 @@ void multMatrixImp::exec() {
 					int* buff = nullptr;
                     //se puede optimizar para que solo haya 1 mensaje 
 					//pero dolor cerebral son las 3 quiero morir
-					matrix_t* matA=nullptr;
-					matrix_t* matB=nullptr;
+					matrix_t* matA=new matrix_t;
+					matrix_t* matB=new matrix_t;
 					matrix_t* res=nullptr;
 
+					std::cout<<"OP_MULT\n";
 						//recibir mat A
 					recvMSG(clientID,(void**)&buff,&dataLen); //2 matrices con tamanio
 					matA->rows=buff[0];
 					matA->cols=buff[1];
-					memcpy(&matA, &buff[2], sizeof(int)*(dataLen-2));
-					std::cout << "RECIBIDA MATRIZ A\n";
-					std::cout << "ROWS: %d COLS: %d [0][0]:%d\n", matA->rows, matA->cols,matA->data[0];
+					matA->data= new int[matA->rows*matA->cols];
+					memcpy(matA->data, &buff[2], sizeof(int)*(dataLen-2));
+					std::cout << "RECIBIDA MATRIZ A\nCols: "<<matA->cols;
+					std::cout << "ROWS: "<<matA->rows<<" COLS: "<<matA->cols<<" [0][0]: "<<matA->data[0]<<"\n";
 					delete buff;
 
 						//recibir mat B
 					recvMSG(clientID,(void**)&buff,&dataLen); //2 matrices con tamanio
+					
 					matB->rows=buff[0];
 					matB->cols=buff[1];
-					memcpy(&matB, &buff[2], sizeof(int)*(dataLen-2));
+					matB->data= new int[matB->rows*matB->cols];
+					memcpy(matB->data, &buff[2], sizeof(int)*(dataLen-2));
 					std::cout << "RECIBIDA MATRIZ B\n";
-					std::cout << "ROWS: %d COLS: %d [0][0]\n", matB->rows, matB->cols, matB->data[0];
+					std::cout << "ROWS: "<<matB->rows<<" COLS: "<<matB->cols<<" [0][0]: "<<matB->data[0]<<"\n";
 					delete buff;
 
 						//operamos
@@ -106,7 +110,7 @@ void multMatrixImp::exec() {
                 case OP_WRITE: { 
 					char *fileName=nullptr;
 					int *buff=nullptr;
-					matrix_t* mat=nullptr;
+					matrix_t* mat=new matrix_t;
 
 				        //NOMBRE ARCHIVO
 					recvMSG(clientID,(void**)&fileName,&dataLen);
@@ -114,7 +118,8 @@ void multMatrixImp::exec() {
 					recvMSG(clientID,(void**)&buff,&dataLen);
 					mat->rows=buff[0];
 					mat->cols=buff[1];
-					memcpy(&mat, &buff[2], sizeof(int)*(dataLen-2));
+					mat->data= new int[mat->rows*mat->cols];
+					memcpy(mat->data, &buff[2], sizeof(int)*(dataLen-2));
 						//ESCRIBIR COMO TAL
 					adminMatrices->writeMatrix(mat,fileName);
 
@@ -125,7 +130,7 @@ void multMatrixImp::exec() {
 
                 case OP_CREATEIDENTITY: {
 					int *dimensiones=nullptr;
-                    matrix_t* res = nullptr;
+                    matrix_t* res = new matrix_t;
                     	//DIMENSIONES DE LA MATRIZ
                     recvMSG(clientID, (void**)&dimensiones, &dataLen);
 						//CREAR Y DEVOLVER
@@ -137,7 +142,7 @@ void multMatrixImp::exec() {
 
                 case OP_CREATERANDOM: {
                     int *dimensiones=nullptr;
-                    matrix_t* res = nullptr;
+                    matrix_t* res = new matrix_t;
                     	//DIMENSIONES DE LA MATRIZ
                     recvMSG(clientID, (void**)&dimensiones, &dataLen);
 						//CREAR Y DEVOLVER

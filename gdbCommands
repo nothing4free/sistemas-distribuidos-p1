@@ -1,0 +1,12 @@
+run
+backtrace
+print nombreVaraible
+print *nombreVaraible
+break nombreFichero:linea
+step 
+next->Salta funciones
+ctr+c para no mata
+continue reanuda
+
+para progrma en bucle
+sudo gdb -p pid (ps -aux | grep "nombreFichero")
