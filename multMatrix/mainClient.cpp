@@ -11,12 +11,12 @@ void freeMatrix(matrix_t* m){
 void writeMat(matrix_t* m){
     int i=0;
     std::cout<<"ROW: "<<m->rows<<" COLS: "<<m->cols<<"\n";
-    /*for(i=0;i<(m->rows*m->cols);++i);{
+    for(i=0;i<(m->rows*m->cols);++i);{
         std::cout<<"  " << m->data[i] << "  ";
         if(i%(m->rows)==0)
             std::cout<<"\n";
-    }*/
-    std::cout<<"data[0] "<<m->data[0]<<" data[1]: "<<m->data[1]<<"\n";
+    }
+    //std::cout<<"data[0] "<<m->data[0]<<" data[1]: "<<m->data[1]<<"\n";
 }
 
 int main(int argc,char** argv) {    
@@ -85,23 +85,27 @@ int main(int argc,char** argv) {
 
     std::cout<<"CREANDO MATRIZ\n";
     matrix_t* m1= matrixStub->createRandMatrix(5,5);
-    std::cout<<"MATRIZ RANDOM RECIBIDA \n";
+    std::cout<<"MATRIZ RANDOM RECIBIDA ["<<m1->data[0]<<","<<m1->data[1]<<"]\n";
     writeMat(m1);
     
 
     std::cout<<"CREANDO MATRIZ IDENTIDAD\n";
     matrix_t* m2= matrixStub->createIdentity(5,5);
+    std::cout<<"MATRIZ IDENTIDAD RECIBIDA ["<<m2->data[0]<<","<<m2->data[1]<<"]\n";
     writeMat(m2);
 
     std::cout<<"MULTIPLICANDO MATRICES\n";
     matrix_t* mres=matrixStub->multMatrices(m1,m2);
+    std::cout<<"MATRIZ MULTIPLICACION RECIBIDA ["<<mres->data[0]<<","<<mres->data[1]<<"]\n";
     writeMat(mres);
     
-    std::cout<<"ESRIBIENDO MATRICES EN 'resultado.txt'\n";
+    std::cout<<"ESRIBIENDO MATRICES MRES y m2 EN 'resultado.txt' 'resultadoIden.txt'\n";
     matrixStub->writeMatrix(mres,"resultado.txt");
+    matrixStub->writeMatrix(m2,"resultadoIden.txt");
 
     std::cout<<"LEYENDO MATRIZ\n";
     matrix_t* m3=matrixStub->readMatrix("resultado.txt");
+    std::cout<<"LEYENDO MATRIZ ["<<m3->data[0]<<","<<m3->data[1]<<"]\n";
     writeMat(mres);
 
     std::cout<<"MULTIPLICNADO M1 CON M3(LEIDA)\n";
@@ -111,6 +115,7 @@ int main(int argc,char** argv) {
     std::cout<<"ESCRIBINEDO MRES2(MULT(M1.M3) en resultado2.txt)\n";
     matrixStub->writeMatrix(mres2,"resultado2.txt");
     writeMat(mres2);
+
     // se libera la memoria de las matrices usadas
     freeMatrix(m1);
     freeMatrix(m2);
@@ -118,5 +123,7 @@ int main(int argc,char** argv) {
     freeMatrix(m3);
     freeMatrix(mres2);
     delete matrixStub;
+
+    std::cout<<"PROGRAMA TERMINADO\n";
 	return 0;
 }

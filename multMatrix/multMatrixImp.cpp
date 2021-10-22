@@ -6,11 +6,13 @@
 
 void writeMat(matrix_t* m){
     int i=0;
+    std::cout<<"ROW: "<<m->rows<<" COLS: "<<m->cols<<"\n";
     for(i=0;i<(m->rows*m->cols);++i);{
         std::cout<<"  " << m->data[i] << "  ";
         if(i%(m->rows)==0)
             std::cout<<"\n";
     }
+    //std::cout<<"data[0] "<<m->data[0]<<" data[1]: "<<m->data[1]<<"\n";
 }
 
 multMatrixImp::multMatrixImp(int clientID) {
@@ -111,7 +113,7 @@ void multMatrixImp::exec() {
 					char *fileName=nullptr;
 					int *buff=nullptr;
 					matrix_t* mat=new matrix_t;
-
+					
 				        //NOMBRE ARCHIVO
 					recvMSG(clientID,(void**)&fileName,&dataLen);
 						//RECIBIR DATA
@@ -121,6 +123,7 @@ void multMatrixImp::exec() {
 					mat->data= new int[mat->rows*mat->cols];
 					memcpy(mat->data, &buff[2], sizeof(int)*(mat->rows*mat->cols));
 						//ESCRIBIR COMO TAL
+					std::cout<<"Escribinedo matriz ["<<mat->data[0]<<","<<mat->data[1]<<"]\n";
 					adminMatrices->writeMatrix(mat,fileName);
 
 					delete fileName;
@@ -151,7 +154,13 @@ void multMatrixImp::exec() {
 					delete dimensiones;
 					delete res;
                 } break;
-
+				case OP_EXIT:
+				{
+					exitFlag=true;
+					char opOK=OP_OK;
+					sendMSG(clientID,(void*)&opOK,sizeof(char));
+				}break;
+				
                 default:
                     std::cout << "ERROR EN SERVIDOR: tipo de operacion no valido\n";
                     std::cout << " |--------------> Fichero: " <<__FILE__ << "\n";
@@ -160,4 +169,5 @@ void multMatrixImp::exec() {
             }
         }
     }
+	std::cout<<"Saliendo de la conexion con el Cliente\n";
 }

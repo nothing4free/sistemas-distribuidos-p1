@@ -4,17 +4,6 @@
 #include <string.h>
 #include "defineOperations.h"
 
-/*
-#define OP_OK             'O'
-#define OP_EXIT           'E'
-
-#define OP_READ           'R'
-#define OP_MULT           'M'
-#define OP_WRITE          'W'
-#define OP_CREATEIDENTITY 'I'
-#define OP_CREATERANDOM   'A' // "A" de aleatorio, era mas logico usar R para read.
-*/
-
 
 multMatrixStub::multMatrixStub() {
     char *ip = NULL;
@@ -65,7 +54,6 @@ matrix_t* multMatrixStub::readMatrix(const char* filename) {
     std::cout << "ENVIANDO EL TIPO DE OPERACION (readMatrix)\n";
     sendMSG(serverID, (void*)&msg, sizeof(char));
 
-
     std::cout << "ENVIANDO NOMBRE DE ARCHIVO (readMatrix)\n";
     sendMSG(serverID, (void*)filename, strlen(filename) + 1);
     std::cout << "RECIBIENDO EL RESULTADO (readMatrix)\n";
@@ -78,7 +66,7 @@ matrix_t* multMatrixStub::readMatrix(const char* filename) {
     memcpy(resultado->data, &buff[2], sizeof(int)*(resultado->rows*resultado->cols));
     //sin perdida de memoria y sin 
     std::cout << "RESULTADO: \n";
-    std::cout << "Filas: %d Columnas: %d\n", resultado->rows, resultado->cols;
+    std::cout << "Filas:  "<< resultado->rows<<" Columnas: "<< resultado->cols<<"\n";
     delete buff;    //ahora funciona bien
     return resultado;
 }
@@ -144,6 +132,7 @@ void multMatrixStub::writeMatrix(matrix_t* m, const char *fileName) {
     for(int i=0;i<(m->rows*m->cols);++i){
 		buff[i+2]=m->data[i];
 	}
+    std::cout << "datos parseados: ROW: "<< buff[0]<<" Col: "<<buff[1]<<" \nDATA: ["<<buff[2] <<"," <<buff[3]<<"]\n";
     sendMSG(serverID, (void*)buff, sizeof(int)*m->rows*m->cols + 2*sizeof(int));
     delete buff;
 }
