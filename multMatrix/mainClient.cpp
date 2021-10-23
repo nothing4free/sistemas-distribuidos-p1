@@ -1,8 +1,14 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
 #include "multmatrix.h"
 #include "multMatrixStub.h"
+
+using std::vector;
+using std::cout;
+using std::cin;
+using std::endl;
 
 //Falta aumentar dinamicamente el tamaño del array de matrix_t y revisar el menu
 
@@ -12,29 +18,28 @@ void freeMatrix(matrix_t* m){
 }
 void writeMat(matrix_t* m){
     int i=0;
-    std::cout<<"ROW: "<<m->rows<<" COLS: "<<m->cols<<"\n";
-    for(int i=0;i<m->rows*m->cols;i++)
-     {
-         if(i%m->rows==0){
-            printf("\n");
-         }
-        
-        printf(" %d\n",m->data[i]);
-        
-     }
-    std::cout<<"\n";
-    //std::cout<<"data[0] "<<m->data[0]<<" data[1]: "<<m->data[1]<<"\n";
+    cout<<"ROW: "<<m->rows<<" COLS: "<<m->cols<<"\n";
+    cout<<"data[0] "<<m->data[0]<<" data[1]: "<<m->data[1]<<"\n";
 }
-void mostrarPosiblesMatrices(matrix_t** mat,int numMat){
-    printf("Matrices Disponibles(%d)",numMat);
-    for (int i = 0; i < numMat; i++)
+
+/**
+ * @brief muestra las dimensiones de todas las matrices alamcenadas y los 2 primeros elementos
+ * @param vect El vector que almacena los punteros de las matrices
+*/
+void mostrarPosiblesMatrices(vector<matrix_t*> &vect){ //referencia a un vector de direcciones de matrices
+    printf("Matrices Disponibles(%lu)\n",vect.size());
+    for (auto i = 0; i < vect.size(); i++)
     {
-        printf("MAT: %d [0][0] = %d\n",i,mat[i]->data[0]);
+        printf("MAT: %d \n\tCol: %d Row: %d [0] = %d [1] = %d\n",i,vect[i]->rows,vect[i]->cols,vect[i]->data[0],vect[i]->data[1]);
     }
 }
-bool checkInd(int a,int numMat){
-    return (-1<a&&a<numMat);
-}
+// ALGO VA MAL CON ESTA FUNCION
+//**
+//* @brief devulve true si a está entre [0 y numMax)
+//*/
+//bool checkInd(long unsigned int a,long unsigned int numMax){ 
+//    return (-1<a && a<numMax);
+//}
 
 int main(int argc,char** argv) {    
 
@@ -45,68 +50,105 @@ int main(int argc,char** argv) {
     multMatrix* matrixInOut=new multMatrix();
 
 //EMPIEZA LA PRUEBA DE UN MENU
-	matrix_t ** mat=new matrix_t*[10];
-    int numMat=0;
-    int tamMat=10;
+    vector<matrix_t*> mat_vec;
 
     int i=0;
 
     char fileName[20];
     std::cout << "Inicio del programa, que quiere hacer?\n";
-   while (i!=7)
+   while (i!=8)
    {
-        std::cout << "1) Crear Matric Aleatoria 2-Matriz identidad 3-Multiplicar 4-Leer de Fichero 5-Escribir 6-Leer terminal 7-Salir\n";
+        std::cout << "1) Crear Matriz Aleatoria 2-Matriz identidad 3-Multiplicar 4-Leer de Fichero 5-Escribir Fichero 6-Leer terminal 7-Mostrar matrices 8-Salir\n";
         std::cin >> i;
         switch (i)
         {
             
         case 1: //RANDOM
-            mat[numMat]=matrixStub->createRandMatrix(5,5);
-            numMat++;
+            {
+            int r,c;
+            
+            cout<<"Rows: \n";
+            cin>>r;
+            cout<<"Cols: \n";
+            cin>>c;
+            
+            mat_vec.push_back(matrixStub->createRandMatrix(r,c));
+            }
             break;
         case 2: //Identidad
-            mat[numMat]=matrixStub->createIdentity(5,5);
-            numMat++;
+            {
+            int r,c;
+            
+            cout<<"Rows: \n";
+            cin>>r;
+            cout<<"Cols: \n";
+            cin>>c;
+            
+            mat_vec.push_back(matrixStub->createIdentity(r,c));
+            }  
             break;
         case 3: //Multiplicar 2
             {
-                int a=0,b=0;
+                long unsigned int a=0,b=0;
                 printf("Que 2 matrices quieres multiplicar?\n");
-                mostrarPosiblesMatrices(mat,numMat);
+                mostrarPosiblesMatrices(mat_vec);
 
-                std::cout<<"Mat a: \n";
+                std::cout<<"Introduce el numero de la PRIMERA matriz: \n";
                 std::cin>>a;
-                std::cout<<"Mat b: \n";
+                std::cout<<"Introduce el numero de la SEGUNDA matriz: \n";
                 std::cin>>b;
-                if (!(checkInd(a,numMat)&&checkInd(b,numMat)))//si no cumple que está dentro del índice
+
+                /*if (!(checkInd(a,mat_vec.size())&&checkInd(b,mat_vec.size())))//si no cumple que está dentro del índice
                 {
                     std::cout <<"indice invalido\n";
                     break;
-                }             
-                mat[numMat]=matrixStub->multMatrices(mat[a],mat[b]);
-                numMat++;
+                } */      
+                if(a<0||mat_vec.size()<=a){
+                    cout<<"primera matriz fuera de rango";
+                }else if (b<0||mat_vec.size()<=b)
+                {
+                    cout<<"segunda matriz fuera de rango";
+                }
+                else
+                {
+                    mat_vec.push_back(matrixStub->multMatrices(mat_vec[a],mat_vec[b]));
+                }
+                
+
+                   
             }
             break;
         case 4: //READ FILE
             
             std::cout<<"introduzca nombre de archivo PARA LEER\n";
             std::cin>>fileName;
-            mat[numMat]=matrixInOut->readMatrix(fileName);
+            mat_vec.push_back(matrixInOut->readMatrix(fileName));
             break;
         case 5: //WRITE
             {
-                int choice=0;
-                std::cout<<"introduzca nombre de archivo PARA LEER\n";
+                long unsigned choice=0;
+
+                std::cout<<"introduzca nombre de archivo PARA Escribir\n";
                 std::cin>>fileName;
                 
-                mostrarPosiblesMatrices(mat,numMat);
+                cout<<"Que matriz quiere guardar?\n";
+                mostrarPosiblesMatrices(mat_vec);
                 std::cin>>choice;
-                matrixInOut->writeMatrix(mat[choice],fileName);
+                
+                if(choice<0||mat_vec.size()<=choice)
+                    cout<<"primera matriz fuera de rango";
+                else
+                    matrixInOut->writeMatrix(mat_vec[choice],fileName);
+                
+                
+               
             }
             break;
-        case 6: //Lectura terminal
+        case 6: //Lectura terminal (QUEDAAAAAAA)
             {   
-                matrix_t * lectura= new matrix_t;
+                cout<<"Lectura por terminal\n";
+
+                matrix_t * lectura= new matrix_t; //Probablemente de error a la hora de eliminarlo
                 std::cout<<"Filas: \n";
                 std::cin>>lectura->rows;
                 std::cout<<"Columnas: \n";
@@ -117,12 +159,13 @@ int main(int argc,char** argv) {
                     printf("Siguiente valor (%d)",i);
                     std::cin>>lectura->data[i];
                 }
-                
-                mat[numMat]=lectura;
-                numMat++;
+                mat_vec.push_back(lectura);
             }
             break;
-        case 7: //Salida
+        case 7: //Mostrar matrices credas
+            mostrarPosiblesMatrices(mat_vec);
+            break;
+        case 8: //Salida
             break;
         default:
             std::cout<<"OPCION NO VALIDA\n";
@@ -172,8 +215,14 @@ int main(int argc,char** argv) {
     freeMatrix(mres);
     freeMatrix(m3);
     freeMatrix(mres2);
+    */
+    for (auto p : mat_vec)
+    {
+        delete p;
+    }
+    mat_vec.clear();
     delete matrixStub;
     delete matrixInOut;
-    std::cout<<"PROGRAMA TERMINADO\n";*/
+    std::cout<<"PROGRAMA TERMINADO\n";
 	return 0;
 }
