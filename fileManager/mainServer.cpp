@@ -4,14 +4,12 @@
 #include "filemanager_imp.h"
 #include "utils.h"
 
-
 void threadClient(int clientID) {
     filemanager_imp* fileServer = new filemanager_imp();
     fileServer->exec();
     delete fileServer;
 
 }
-
 
 int main() {
 

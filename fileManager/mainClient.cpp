@@ -21,6 +21,7 @@ int main() {
     cout << " [CLIENTE]> Cliente iniciado. Elija una opcion.\n";
     help();
     while(1<2) {
+        cout << " > ";
         cin >> opcion;
         if(opcion == "ls") {
             fileClient->ListFiles();
@@ -32,10 +33,10 @@ int main() {
             fileClient->WriteFile();
 
         } else if (opcion == "download") {
-            // TODO
+            fileClient->download();
 
         } else if (opcion == "upload") {
-            // TODO
+            fileClient->upload();
 
         } else if (opcion == "exit") {
             break;
@@ -48,6 +49,7 @@ int main() {
         }
     }
     // interrumpir conexion con el servidor
+    cout << " [CLIENTE]> Cerrando conexion...\n";
     delete fileClient;
     return 0;
 }

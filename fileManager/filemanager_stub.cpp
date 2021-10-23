@@ -17,6 +17,8 @@
 // mirar los archivos operaciones_imp.h y operaciones_imp.cpp
 
 filemanager_stub::filemanager_stub() {
+
+    vfiles = fm->listFiles();
     char* ip = NULL;
     ip=new char[strlen(IP_SERVER)+1];
 	memcpy(ip,IP_SERVER,strlen(IP_SERVER)+1);
@@ -34,17 +36,21 @@ filemanager_stub::filemanager_stub() {
 
 filemanager_stub::~filemanager_stub() {
     char msg=OP_EXIT;
-	sendMSG(serverID,(void*)&msg,sizeof(char));
-	//recibir resultado
-	char* buff=nullptr;
-	int dataLen=0;
-	char state=0;
-	recvMSG(serverID,(void**)&buff,&dataLen);
-	memcpy(&state,buff,sizeof(char));
-	delete buff;
-	
-	if(state!=OP_OK)
-		std::cout<<"ERROR cerrando conexion\n";
+    sendMSG(serverID, (void*)&msg, sizeof(char));
+
+    char* buff = nullptr;
+    int dataLen = 0;
+    char state = 0;
+
+    recvMSG(serverID, (void**)&buff, &dataLen);
+    memcpy(&state, buff, sizeof(char));
+    delete buff;
+
+    if(state != OP_OK) {
+        std::cout << "ERROR: fallo al cerrar conexion\n";
+        std::cout << " |--------------> Fichero: " <<__FILE__ << "\n";
+        std::cout << " |--------------> Linea: " << __LINE__ << "\n";
+    }
 }
 
 void filemanager_stub::ListFiles() {
@@ -68,6 +74,7 @@ void filemanager_stub::ListFiles() {
 
     cout << " [LISTFILES]> Ficheros a recibir: " << fileAmt << "\n";
 
+    // muestra ficheros a recibir
     for(int i = 0; i < fileAmt; i++) {
         recvMSG(serverID, (void**)&buff, &dataLen);
         string *tempFileName = new string;
@@ -84,7 +91,6 @@ void filemanager_stub::ListFiles() {
 void filemanager_stub::ReadFile() {
     
     char msg = READ;
-    // result goes here
     char* buff = nullptr;
     int dataLen = 0;
     int fileSize = 0;
@@ -139,4 +145,101 @@ void filemanager_stub::WriteFile() {
     // envio del contenido
     sendMSG(serverID, (void*)fileContent, strlen(fileContent) + 1);
     cout << " [WRITEFILE]> Archivo enviado correctamente.\n";
+}
+
+void filemanager_stub::download() {
+    cout << " [DOWNLOAD]> Iniciando secuencia download...\n";
+    cout << " [DOWNLOAD]> Introduzca el nombre del fichero a descargar...\n";
+    
+    char msg = LIST;
+    char* buff = nullptr;
+    int fileAmt = 0;
+    int dataLen = 0;
+
+
+    // LIST FILES ---------------------------------------------------------
+    char *fileName = new char;
+
+    vector<string*>* fileList = new vector<string*>();
+   
+    // enviar orden "LIST"
+    sendMSG(serverID, (void*)&msg, sizeof(char)); 
+
+    // recibimos la cantidad de archivos para determinar cuantas veces
+    // se repetira el bucle q repite dichos nombres de archivo
+    recvMSG(serverID, (void**)&buff, &dataLen);
+    memcpy(&fileAmt, buff, sizeof(int));
+    delete buff;
+
+    for(int i = 0; i < fileAmt; i++) {
+        recvMSG(serverID, (void**)&buff, &dataLen);
+        string *tempFileName = new string;
+        tempFileName->append(buff);
+        fileList->push_back(tempFileName);
+        cout << "               > " << fileList->at(i)->c_str() << "\n";
+        delete tempFileName;
+        delete buff;
+    }
+
+    cin >> fileName;
+
+    // READ FILES ---------------------------------------------------------
+
+    msg = READ;
+    sendMSG(serverID, (void*)&msg, sizeof(char));
+
+    int fileSize = 0;
+    char* fileNameChar = new char;
+    char* fileContent = nullptr;
+
+    // enviar el nombre
+    sendMSG(serverID, (void*)fileName, (strlen(fileName) + 1));
+
+    // recibir el size
+    recvMSG(serverID, (void**)&buff, &dataLen);
+    memcpy(&fileSize, buff, sizeof(int));
+    delete buff;
+
+    // recibir contenidos
+    recvMSG(serverID, (void**)&fileContent, &dataLen);
+    fm->writeFile(fileName, fileContent, dataLen); // escribimos en directorio
+
+    cout << " [DOWNLOAD]> Archivo descargado.\n";
+}
+
+void filemanager_stub::upload() {
+    cout << " [UPLOAD]> Iniciando secuencia upload...\n";
+    cout << " [UPLOAD]> Introduzca el nombre del fichero a subir...\n";
+    vector<string*>* fileList = new vector<string*>();
+
+    // realiza listado de archivos en local
+    fileList = fm->listFiles();
+    int localFileAmount = fileList->size();
+
+    // muestra los ficheros en local
+    for(int i = 0; i < localFileAmount; i++) {
+        cout << " > " << fileList->at(i)->c_str() << "\n";
+    }
+    
+    char *fileName = new char;
+    char *fileContent = nullptr;
+    unsigned long int fileLen = 0;
+
+    cin >> fileName;
+
+    // WRITE ------------------------------------------------------------
+
+    // envio de la orden
+    char msg = WRITE;
+    sendMSG(serverID, (void*)&msg, sizeof(char));
+
+    // envio del nombre
+    sendMSG(serverID, (void*)fileName, strlen(fileName) + 1);
+
+    fm->readFile(fileName, fileContent, fileLen);
+    // envio del contenido
+    sendMSG(serverID, (void*)fileContent, sizeof(fileContent) + 1);
+
+    cout << " [UPLOAD]> Fichero subido correctamente.\n";
+
 }
