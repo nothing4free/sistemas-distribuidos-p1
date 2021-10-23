@@ -21,28 +21,30 @@ filemanager_imp::filemanager_imp() {
 
 filemanager_imp::~filemanager_imp() {
     cout<<"Liberando lista de ficheros:\n";
-    //fm->freeListedFiles(vfiles);
-    cout<<"Liberando datos de fichero leído:\n";
+    fm->freeListedFiles(vfiles);
 }
 
-void filemanager_imp::ListFiles() {
+void filemanager_imp::ListFiles() { // ls
 
     cout << " [LISTFILES]> Iniciando secuencia ListFiles...\n";
     int fileAmount = vfiles->size();
+
+    // imprime archivos a listar
     for(unsigned int i=0;i<vfiles->size();++i)
     {
         cout<<" [LISTFILES]> Fichero detectado: "<<vfiles->at(i)->c_str()<<endl;
     }
 
+    // imprime la cantidad de archivos a enviar
     std::cout << " [LISTFILES]> Ficheros a enviar: " << vfiles->size() << " \n";
     sendMSG(clientID, (void*)&fileAmount, sizeof(int)); // enviamos el tamano
 
+    // debug del envio
     std::cout << " [LISTFILES]> Enviando ficheros: \n";
     for(int i = 0; i < vfiles->size(); i++) {
         std::cout << "              > " << vfiles->at(i)->c_str() << "\n";
         sendMSG(clientID, (void*)vfiles->at(i)->c_str(), sizeof(char) * vfiles->at(i)->length());
     }
-    //fm->freeListedFiles(vfiles);
 
     std::cout << " [LISTFILES]> Ficheros enviados. \n";
 }
@@ -58,23 +60,26 @@ void filemanager_imp::ReadFile() { // echo
     string* fileNameStr = new string;
 
     // recibimos el nombre de archivo
-    //cout << "RECVMSG INCOMING\n";
     recvMSG(clientID, (void**)&fileName, &dataLen); //ok
     cout << " [READFILE]> Nombre de archivo recibido: " << fileName << "\n";
 
+    // lee el archivo especificado
     cout << " [READFILE]> Leyendo archivo...\n";
     fm->readFile(fileName,data,fileLen);
 
+    // envia el tamano del archivo
     cout << " [READFILE]> Enviando size del archivo: " << fileLen << "\n";
     sendMSG(clientID, &fileLen, sizeof(unsigned long int)); // envio del size
 
+    // envia los contenidos del archivo
     cout << " [READFILE]> Enviando contenidos del archivo: \n\n" << data << "\n";
     sendMSG(clientID, (void*)data, sizeof(char*) * fileLen);
     cout << "\n\n";
 
 }
 
-void filemanager_imp::WriteFile() {
+void filemanager_imp::WriteFile() { // echo
+
     cout << " [WRITEFILE]> Iniciando secuencia WriteFile...\n";
     char* fileName = nullptr;
     char* fileContent = nullptr;
@@ -82,23 +87,24 @@ void filemanager_imp::WriteFile() {
     int dataLen = 0;
     unsigned long int fileLen=0;
 
+    // recibe el nombre del fichero
     recvMSG(clientID, (void**)&fileName, &dataLen);
     cout << " [WRITEFILE]> Recibido nombre de fichero: " << fileName << "\n";
 
+    // recibe el contenido del fichero
     recvMSG(clientID, (void**)&fileContent, &dataLen);
     cout << " [WRITEFILE]> Recibido contenido: " << fileContent << "\n";
     fileContentStr->append(fileContent);
     fileLen = fileContentStr->length();
 
-    //cout<<"Escribiendo el primer fichero del directorio de prueba:\n";
-    //fm->writeFile(&(*(vfiles->at(0)))[0],data,fileLen);
+    // escribe en el fichero
     fm->writeFile(fileName, fileContent, fileLen);
     cout << " [WRITEFILE]> Fichero escrito correctamente.\n";
 
     delete fileContentStr;
 }
 
-void filemanager_imp::exec() {
+void filemanager_imp::exec() { // bucle que escucha al cliente
     while(salir!=true) { 
         char *msg = NULL;
         int dataLen = 0;
@@ -125,8 +131,13 @@ void filemanager_imp::exec() {
                     this->ListFiles();
                     break;
                 case OP_EXIT:
-                    this->salir == true;
+                    salir = true;
+                    char opOK = OP_OK;
+                    sendMSG(clientID, (void*)&opOK, sizeof(char));
+                    break;
+
             }
         }
     }
+    cout << " [SERVER]> Cerrando conexion...\n";
 }
