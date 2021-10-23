@@ -55,11 +55,11 @@ int main(int argc,char** argv) {
     int i=0;
 
     char fileName[20];
-    std::cout << "Inicio del programa, que quiere hacer?\n";
+    cout << "Inicio del programa, que quiere hacer?\n";
    while (i!=8)
    {
-        std::cout << "1) Crear Matriz Aleatoria 2-Matriz identidad 3-Multiplicar 4-Leer de Fichero 5-Escribir Fichero 6-Leer terminal 7-Mostrar matrices 8-Salir\n";
-        std::cin >> i;
+        cout << "1) Crear Matriz Aleatoria 2-Matriz identidad 3-Multiplicar 4-Leer de Fichero 5-Escribir Fichero 6-Leer terminal 7-Mostrar matrices 8-Salir\n";
+        cin >> i;
         switch (i)
         {
             
@@ -69,6 +69,7 @@ int main(int argc,char** argv) {
             
             cout<<"Rows: \n";
             cin>>r;
+            
             cout<<"Cols: \n";
             cin>>c;
             
@@ -109,8 +110,8 @@ int main(int argc,char** argv) {
             break;
         case 4: //READ FILE
             
-                std::cout<<"introduzca nombre de archivo PARA LEER\n";
-                std::cin>>fileName;
+                cout<<"introduzca nombre de archivo PARA LEER\n";
+                cin>>fileName;
                 mat_vec.push_back(matrixInOut->readMatrix(fileName));
             break;
         case 5: //WRITE
@@ -214,6 +215,6 @@ int main(int argc,char** argv) {
     mat_vec.shrink_to_fit();    //Al haber eliminado los objetos, el tamanio que saldrá será 0
     delete matrixStub;
     delete matrixInOut;
-    std::cout<<"PROGRAMA TERMINADO\n";
+    cout<<"PROGRAMA TERMINADO\n";
 	return 0;
 }
