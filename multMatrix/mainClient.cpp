@@ -30,7 +30,7 @@ void mostrarPosiblesMatrices(vector<matrix_t*> &vect){ //referencia a un vector 
     printf("Matrices Disponibles(%lu)\n",vect.size());
     for (auto i = 0; i < vect.size(); i++)
     {
-        printf("MAT: %d \n\tCol: %d Row: %d [0] = %d [1] = %d\n",i,vect[i]->rows,vect[i]->cols,vect[i]->data[0],vect[i]->data[1]);
+        printf("MAT: %d \n\tCol: %d Row: %d [0] = %d [1] = %d\n",i,vect[i]->rows,vect[i]->cols,vect[i]->data[0],vect[i]->data[1]);        
     }
 }
 // ALGO VA MAL CON ESTA FUNCION
@@ -97,51 +97,37 @@ int main(int argc,char** argv) {
                 std::cin>>a;
                 std::cout<<"Introduce el numero de la SEGUNDA matriz: \n";
                 std::cin>>b;
-
-                /*if (!(checkInd(a,mat_vec.size())&&checkInd(b,mat_vec.size())))//si no cumple que está dentro del índice
-                {
-                    std::cout <<"indice invalido\n";
-                    break;
-                } */      
-                if(a<0||mat_vec.size()<=a){
+    
+                if(a<0||mat_vec.size()<=a)
                     cout<<"primera matriz fuera de rango";
-                }else if (b<0||mat_vec.size()<=b)
-                {
+                else if (b<0||mat_vec.size()<=b)
                     cout<<"segunda matriz fuera de rango";
-                }
                 else
-                {
                     mat_vec.push_back(matrixStub->multMatrices(mat_vec[a],mat_vec[b]));
-                }
-                
-
-                   
+                  
             }
             break;
         case 4: //READ FILE
             
-            std::cout<<"introduzca nombre de archivo PARA LEER\n";
-            std::cin>>fileName;
-            mat_vec.push_back(matrixInOut->readMatrix(fileName));
+                std::cout<<"introduzca nombre de archivo PARA LEER\n";
+                std::cin>>fileName;
+                mat_vec.push_back(matrixInOut->readMatrix(fileName));
             break;
         case 5: //WRITE
             {
                 long unsigned choice=0;
 
-                std::cout<<"introduzca nombre de archivo PARA Escribir\n";
-                std::cin>>fileName;
+                cout<<"introduzca nombre de archivo PARA Escribir\n";
+                cin>>fileName;
                 
                 cout<<"Que matriz quiere guardar?\n";
-                mostrarPosiblesMatrices(mat_vec);
-                std::cin>>choice;
+                    mostrarPosiblesMatrices(mat_vec);
+                cin>>choice;
                 
                 if(choice<0||mat_vec.size()<=choice)
                     cout<<"primera matriz fuera de rango";
                 else
-                    matrixInOut->writeMatrix(mat_vec[choice],fileName);
-                
-                
-               
+                    matrixInOut->writeMatrix(mat_vec[choice],fileName);   
             }
             break;
         case 6: //Lectura terminal (QUEDAAAAAAA)
@@ -149,15 +135,19 @@ int main(int argc,char** argv) {
                 cout<<"Lectura por terminal\n";
 
                 matrix_t * lectura= new matrix_t; //Probablemente de error a la hora de eliminarlo
-                std::cout<<"Filas: \n";
-                std::cin>>lectura->rows;
-                std::cout<<"Columnas: \n";
-                std::cin>>lectura->cols;
+                
+                cout<<"Filas: \n";
+                cin>>lectura->rows;
+                
+                cout<<"Columnas: \n";
+                cin>>lectura->cols;
+                
                 lectura->data=new int [lectura->rows*lectura->cols];
+                
                 for (int i = 0; i < lectura->rows*lectura->cols; i++)
                 {
                     printf("Siguiente valor (%d)",i);
-                    std::cin>>lectura->data[i];
+                    cin>>lectura->data[i];
                 }
                 mat_vec.push_back(lectura);
             }
@@ -168,7 +158,7 @@ int main(int argc,char** argv) {
         case 8: //Salida
             break;
         default:
-            std::cout<<"OPCION NO VALIDA\n";
+            cout<<"OPCION NO VALIDA\n";
             break;
         }
     }
@@ -216,11 +206,12 @@ int main(int argc,char** argv) {
     freeMatrix(m3);
     freeMatrix(mres2);
     */
+    //eliminando las matrices individuales cargadas
     for (auto p : mat_vec)
-    {
-        delete p;
-    }
-    mat_vec.clear();
+        freeMatrix(p);
+    
+    mat_vec.clear();            //elimina los objetos pero sigue teniendo tamanio X
+    mat_vec.shrink_to_fit();    //Al haber eliminado los objetos, el tamanio que saldrá será 0
     delete matrixStub;
     delete matrixInOut;
     std::cout<<"PROGRAMA TERMINADO\n";
