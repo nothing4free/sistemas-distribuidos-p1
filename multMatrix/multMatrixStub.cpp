@@ -51,7 +51,7 @@ matrix_t* multMatrixStub::readMatrix(const char* filename) {
     
     matrix_t* resultado = new matrix_t;
     
-    std::cout << "ENVIANDO EL TIPO DE OPERACION (readMatrix)\n";
+    //std::cout << "ENVIANDO EL TIPO DE OPERACION (readMatrix)\n";
     sendMSG(serverID, (void*)&msg, sizeof(char));
 
     std::cout << "ENVIANDO NOMBRE DE ARCHIVO (readMatrix)\n";
@@ -59,7 +59,7 @@ matrix_t* multMatrixStub::readMatrix(const char* filename) {
     std::cout << "RECIBIENDO EL RESULTADO (readMatrix)\n";
     recvMSG(serverID, (void**)&buff, &dataLen);
 
-    std::cout << "COPIANDO MEMORIA\n";
+    //std::cout << "COPIANDO MEMORIA\n";
     resultado->rows = buff[0];
     resultado->cols = buff[1];
     resultado->data=new int[resultado->rows*resultado->cols];
@@ -81,11 +81,11 @@ matrix_t* multMatrixStub::multMatrices(matrix_t* m1, matrix_t* m2) {
     resultado->cols = m2->cols;
     
     int tambuff=m1->cols*m1->rows+2;
-    std::cout<<"Tamanio buff m1->cols*m1->rows+2 = "<<tambuff<<"\n";
+    //std::cout<<"Tamanio buff m1->cols*m1->rows+2 = "<<tambuff<<"\n";
     int *buff= new int[m1->cols*m1->rows+2]; 
 
     
-    std::cout << "ENVIANDO EL TIPO DE OPERACION (multMatrix)\n";
+    //std::cout << "ENVIANDO EL TIPO DE OPERACION (multMatrix)\n";
     sendMSG(serverID, (void*)&msg, sizeof(char));
     
 	buff[0]=m1->rows;
@@ -111,7 +111,7 @@ matrix_t* multMatrixStub::multMatrices(matrix_t* m1, matrix_t* m2) {
     recvMSG(serverID, (void**)&resultado->data, &dataLen);
     std::cout << "RESULTADO RECIBIDO (multMatrix)\n";
     
-    std::cout << "Devolviendo MATRIZ 2 (multMatrix)\n";
+    //std::cout << "Devolviendo MATRIZ 2 (multMatrix)\n";
     
     return resultado;
 }
