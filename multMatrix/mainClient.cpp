@@ -16,17 +16,25 @@ void freeMatrix(matrix_t* m){
     delete[] m->data;
     delete[] m;
 }
-void writeMat(matrix_t* m){
-    int i=0;
+void consoleWriteMat(matrix_t* m){
     cout<<"ROW: "<<m->rows<<" COLS: "<<m->cols<<"\n";
-    cout<<"data[0] "<<m->data[0]<<" data[1]: "<<m->data[1]<<"\n";
+    for (int i = 0; i < m->rows; i++)
+    {
+        for (int j = 0; j < m->cols; j++)
+        {
+            printf("%d\t",m->data[i*m->cols+j]);  
+        }
+        cout<<"\n";
+    }
+    /*Otra opcion ara implementarlo es recorrerlo entero y en (i%m->cols==0)?( cout<<"\n"):cout<<" " --> cout<<(i%m->cols==0?"\n":" ")*/
+    
 }
 
 /**
  * @brief muestra las dimensiones de todas las matrices alamcenadas y los 2 primeros elementos
  * @param vect El vector que almacena los punteros de las matrices
 */
-void mostrarPosiblesMatrices(vector<matrix_t*> &vect){ //referencia a un vector de direcciones de matrices
+void mostrarPosiblesMatrices(vector<matrix_t*> &vect){ //referencia a un vector de direcciones de matrices    
     printf("Matrices Disponibles(%lu)\n",vect.size());
     for (auto i = 0; i < vect.size(); i++)
     {
@@ -154,7 +162,26 @@ int main(int argc,char** argv) {
             }
             break;
         case 7: //Mostrar matrices credas
-            mostrarPosiblesMatrices(mat_vec);
+            {
+                long unsigned int mat;
+                char elec;
+                mostrarPosiblesMatrices(mat_vec);
+                cout<<"Quieres detalles extra de alguna? (y/n)\n";
+                cin>>elec;
+                if (elec=='y')
+                {
+                    cout<<"De cual?: \n";
+                    cin>>mat;
+                    
+                    if(mat<0||mat_vec.size()<=mat)
+                        cout<<"Indice invalido"<<mat<<"\n";
+                    else
+                        consoleWriteMat(mat_vec[mat]);
+                    
+                        
+                }
+
+            }
             break;
         case 8: //Salida
             break;
