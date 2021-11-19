@@ -1,4 +1,6 @@
 // SERVIDORn
+// HOLA ESTOY EDITANDO DESDE VSCODE EN FIREFOX
+
 
 #include "filemanager_imp.h"
 #include "filemanager.h"
