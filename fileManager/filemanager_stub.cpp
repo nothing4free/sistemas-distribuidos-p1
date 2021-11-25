@@ -10,15 +10,15 @@
 #define OP_EXIT  'E'
 #define OP_OK    'O'
 
-#define PORT_SERVER 3301
-#define IP_SERVER "127.0.0.1"
+#define PORT_SERVER 31000     // sustituir por puerto de k8s ()
+#define IP_SERVER "127.0.0.1" // sustituir por IP del nodo esclavo
 
 // aqui se desarrollan los metodos de filemanager_stub.h.
 // mirar los archivos operaciones_imp.h y operaciones_imp.cpp
 
 filemanager_stub::filemanager_stub() {
 
-    vfiles = fm->listFiles();
+    vfiles = fm->listFiles(); // pasar listFiles(directorio sshfs)
     char* ip = NULL;
     ip=new char[strlen(IP_SERVER)+1];
 	memcpy(ip,IP_SERVER,strlen(IP_SERVER)+1);
@@ -28,7 +28,7 @@ filemanager_stub::filemanager_stub() {
 	serverID=initClient(ip,PORT_SERVER);
 	if(serverID==-1)
 	{
-		std::cout<<"ERROR CLIENTE Fichero: "<<__FILE__<<" Línea: "<<__LINE__<<" Conexión no válida\n";
+		std::cout<<"ERROR CLIENTE Fichero: "<<__FILE__<<" Línea: "<<__LINE__<<" Conexion no válida\n";
 	}
 	
 	delete ip;
